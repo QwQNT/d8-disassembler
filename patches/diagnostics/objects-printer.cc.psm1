@@ -11,8 +11,11 @@ function Patch {
         $Body += "`n"
         $Body += @"
   os << "\nStart BytecodeArray\n";
-  // TODO: isolate may be invalid
-  this->GetActiveBytecodeArray(isolate)->Disassemble(os);
+  if (isolate != nullptr && this->HasBytecodeArray()) {
+    this->GetActiveBytecodeArray(isolate)->Disassemble(os);
+  } else {
+    os << "<none>\n";
+  }
   os << "\nEnd BytecodeArray\n";
   os << std::flush;
 "@

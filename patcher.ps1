@@ -3,7 +3,7 @@ param (
 )
 
 $patchesRoot = Join-Path $PSScriptRoot "patches"
-$sourceRoot = Join-Path $PSScriptRoot "v8\src"
+$sourceRoot = Join-Path $PSScriptRoot "target\v8\src"
 
 function Restore-PatchedFile {
     param (

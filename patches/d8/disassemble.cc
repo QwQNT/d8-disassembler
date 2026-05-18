@@ -16,19 +16,20 @@ void Shell::LoadBytecode(const v8::FunctionCallbackInfo<v8::Value>& info) {
     }
 
     int length = 0;
-    auto filedata = reinterpret_cast<uint8_t*>(ReadChars(*filename, &length));
-    if (filedata == NULL) {
+    std::unique_ptr<char[]> raw_filedata(ReadChars(*filename, &length));
+    if (raw_filedata == nullptr) {
         isolate->ThrowException(v8::Exception::Error(
             v8::String::NewFromUtf8(isolate, "Error reading file.").ToLocalChecked()));
         return;
     }
 
+    auto filedata = reinterpret_cast<uint8_t*>(raw_filedata.get());
     v8::internal::AlignedCachedData cached_data(filedata, length);
     auto source = isolateInternal->factory()
         ->NewStringFromUtf8(base::CStrVector("source"))
         .ToHandleChecked();
     v8::internal::ScriptDetails script_details;
-    
+
     printf("===== START DESERIALIZE BYTECODE =====\n");
     v8::internal::CodeSerializer::Deserialize(isolateInternal, &cached_data, source, script_details);
 }
